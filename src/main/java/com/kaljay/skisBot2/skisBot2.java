@@ -17,7 +17,7 @@ import java.net.URL;
  */
 public class skisBot2 {
 
-    public static IDiscordClient discordClient;
+    static IDiscordClient discordClient;
     static String discordToken = "";
     static String riotAPIKey = "";
     static String OAuthToken = "";
