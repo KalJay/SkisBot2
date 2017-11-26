@@ -1,5 +1,6 @@
 package com.kaljay.skisBot2;
 
+import com.kaljay.skisBot2.Communication.Voice;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;

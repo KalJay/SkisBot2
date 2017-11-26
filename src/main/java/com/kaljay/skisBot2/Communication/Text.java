@@ -1,4 +1,4 @@
-package com.kaljay.skisBot2;
+package com.kaljay.skisBot2.Communication;
 
 
 import sx.blah.discord.handle.obj.IChannel;

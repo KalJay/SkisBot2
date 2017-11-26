@@ -1,7 +1,7 @@
-package com.kaljay.skisBot2;
+package com.kaljay.skisBot2.Communication;
 
+import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.audio.AudioPlayer;
 
