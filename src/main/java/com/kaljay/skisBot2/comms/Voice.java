@@ -43,7 +43,7 @@ public class Voice {
         }
     }
 
-    private static boolean leaveVoiceChannel() {
+    public static boolean leaveVoiceChannel() {
         if(engagedChannel != null) {
             engagedChannel.leave();
             engaged = false;

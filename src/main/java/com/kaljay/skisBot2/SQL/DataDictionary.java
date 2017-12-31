@@ -8,6 +8,8 @@ import java.util.ArrayList;
  */
 public class DataDictionary {
 
+
+
     private ArrayList<DataColumn> Columns = new ArrayList<>();
 
 
@@ -23,5 +25,9 @@ public class DataDictionary {
             }
         }
         Columns.removeAll(temp);
+    }
+
+    public ArrayList<DataColumn> getColumns() {
+        return Columns;
     }
 }

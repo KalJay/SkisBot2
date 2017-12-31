@@ -1,6 +1,7 @@
 package com.kaljay.skisBot2;
 
 import com.kaljay.skisBot2.modules.CalendarEvents;
+import com.kaljay.skisBot2.modules.ModuleManager;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IGuild;
@@ -40,22 +41,7 @@ public class skisBot2 {
     }
 
     private static void loadModules() {
-        CalendarEvents.setTimers();
-    }
-
-
-    //should be moved
-    public static void playAudioFromFile(String s_file, IGuild guild) throws IOException, UnsupportedAudioFileException {
-        URL url;
-        if (skisBot2.class.getResource("skisBot2.class").toString().startsWith("file:")) {
-            url = new File("src/main/resources/resources/" + s_file).toURI().toURL();
-        } else {
-            //System.out.println(SkisBot.class.getResource("/resources/" + s_file).toString());
-            System.out.println("/resources/" + s_file);
-            url = skisBot2.class.getResource("/resources/" + s_file);
-        }
-        AudioPlayer player = AudioPlayer.getAudioPlayerForGuild(guild);
-        player.queue(url);
+        ModuleManager.initialiseModules();
     }
 
     public static List<IGuild> getGuilds() {

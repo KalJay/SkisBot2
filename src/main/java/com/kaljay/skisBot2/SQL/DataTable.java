@@ -10,6 +10,14 @@ public class DataTable {
     String name;
     DataDictionary dictionary;
 
+    public String getName() {
+        return name;
+    }
+
+    public DataDictionary getDictionary() {
+        return dictionary;
+    }
+
     public DataTable(String name, DataDictionary dictionary) {
         this.name = name;
         this.dictionary = dictionary;
