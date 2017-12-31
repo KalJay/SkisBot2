@@ -1,7 +1,9 @@
-package com.kaljay.skisBot2.Communication;
+package com.kaljay.skisBot2.comms;
 
 
+import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.obj.IChannel;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 
 import java.io.File;
@@ -62,6 +64,13 @@ public class Text {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean sendToAllGuilds(String text) {
+        for (IGuild guild: skisBot2.getGuilds()) {
+            sendToTextChannel(guild.getDefaultChannel(), text);
+        }
+        return true;
     }
 
 

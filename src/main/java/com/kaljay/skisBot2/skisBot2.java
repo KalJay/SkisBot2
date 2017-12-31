@@ -1,5 +1,6 @@
 package com.kaljay.skisBot2;
 
+import com.kaljay.skisBot2.modules.CalendarEvents;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IGuild;
@@ -10,6 +11,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Project: SkisBot2
@@ -17,25 +19,32 @@ import java.net.URL;
  */
 public class skisBot2 {
 
-    static IDiscordClient discordClient;
-    static String discordToken = "";
-    static String riotAPIKey = "";
-    static String OAuthToken = "";
-    static String OAuthSecret = "";
+    private static IDiscordClient discordClient;
+    private static String discordToken = "";
+    private static String riotAPIKey = "";
+    private static String OAuthToken = "";
+    private static String OAuthSecret = "";
 
     public static void main(String[] args) throws Exception {
         if(Config.loadConfig()) {
             discordClient = getClient();
             discordClient.getDispatcher().registerListener(new EventHandler());
+            loadModules();
         } else {
             System.out.println("SKIS: Shutting Down...");
         }
     }
 
-    private static IDiscordClient getClient() throws DiscordException, IOException {
+    private static IDiscordClient getClient() throws DiscordException {
         return new ClientBuilder().withToken(discordToken).login();
     }
 
+    private static void loadModules() {
+        CalendarEvents.setTimers();
+    }
+
+
+    //should be moved
     public static void playAudioFromFile(String s_file, IGuild guild) throws IOException, UnsupportedAudioFileException {
         URL url;
         if (skisBot2.class.getResource("skisBot2.class").toString().startsWith("file:")) {
@@ -47,6 +56,10 @@ public class skisBot2 {
         }
         AudioPlayer player = AudioPlayer.getAudioPlayerForGuild(guild);
         player.queue(url);
+    }
+
+    public static List<IGuild> getGuilds() {
+        return discordClient.getGuilds();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.kaljay.skisBot2.Communication;
+package com.kaljay.skisBot2.comms;
 
 import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.obj.IChannel;
@@ -16,8 +16,8 @@ import java.net.URL;
  */
 public class Voice {
 
-    static boolean engaged = false;
-    static IVoiceChannel engagedChannel = null;
+    private static boolean engaged = false;
+    private static IVoiceChannel engagedChannel = null;
 
     public static boolean sendToVoiceChannel(IVoiceChannel channel, String file) {
         if(!engaged) {
@@ -43,7 +43,7 @@ public class Voice {
         }
     }
 
-    public static boolean leaveVoiceChannel() {
+    private static boolean leaveVoiceChannel() {
         if(engagedChannel != null) {
             engagedChannel.leave();
             engaged = false;
