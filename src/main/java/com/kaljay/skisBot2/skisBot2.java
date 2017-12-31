@@ -20,10 +20,10 @@ import java.util.List;
 public class skisBot2 {
 
     private static IDiscordClient discordClient;
-    private static String discordToken = "";
-    private static String riotAPIKey = "";
-    private static String OAuthToken = "";
-    private static String OAuthSecret = "";
+    static String discordToken = "";
+    static String riotAPIKey = "";
+    static String OAuthToken = "";
+    static String OAuthSecret = "";
 
     public static void main(String[] args) throws Exception {
         if(Config.loadConfig()) {
