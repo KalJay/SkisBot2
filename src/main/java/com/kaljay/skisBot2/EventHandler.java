@@ -18,6 +18,7 @@ public class  EventHandler {
     @EventSubscriber
     public void onReadyEvent(ReadyEvent event) {
         System.out.println("SkisBot2 Online and Ready!");
+        Database.UpdateOrInsertDefaultTables();
     }
 
 

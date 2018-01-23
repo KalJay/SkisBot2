@@ -22,7 +22,7 @@ public class ModuleManager {
         OAuthSecret = ModuleManager.OAuthSecret;
 
         Database.connect();
-        CalendarEvents.setTimers();
+        //CalendarEvents.setTimers(); //to be fixed at a later date
 
         LeagueModule.run(riotAPIKey);
 

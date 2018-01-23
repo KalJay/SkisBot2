@@ -1,10 +1,15 @@
 package com.kaljay.skisBot2.SQL;
 
+import com.kaljay.skisBot2.skisBot2;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Project: SkisBot2
@@ -82,7 +87,7 @@ public class Database {
         }
         statement += ")";
 
-        System.out.println(statement);
+        //System.out.println(statement);
         SQLUpdate(statement);
 
 
@@ -149,4 +154,46 @@ public class Database {
             addDataTable(table);
         }
     }
+
+    public static void UpdateOrInsertDefaultTables() {
+        ArrayList<IUser> uniqueUsers = new ArrayList<>();
+
+        for (IGuild guild : skisBot2.getGuilds()) {
+
+            for  (IUser user: guild.getUsers()) {
+                String statement1 = "";
+                statement1 += "UPDATE GuildPlayers SET Player_ID = " + user.getLongID() + ", Player_Nickname = '" + user.getDisplayName(guild) + "' WHERE Player_ID = " + user.getLongID() + ";";
+                //System.out.println(statement);
+                SQLUpdate(statement1);
+                statement1 = "INSERT OR IGNORE INTO GuildPlayers (Guild_ID, Player_ID, Player_Nickname) VALUES (" + guild.getLongID() + ", " + user.getLongID() + ", '" + user.getDisplayName(guild) + "')";
+                //System.out.println(statement);
+                SQLUpdate(statement1);
+                if(!uniqueUsers.contains(user)) {
+                    uniqueUsers.add(user);
+                }
+            }
+
+            for (IUser user : uniqueUsers) {
+                String statement1 = "";
+                statement1 += "UPDATE Players SET Player_ID = " + user.getLongID() + ", Player_Name = '" + user.getName() + "' WHERE Player_ID = " + user.getLongID() + ";";
+                //System.out.println(statement);
+                SQLUpdate(statement1);
+                statement1 = "INSERT OR IGNORE INTO Players (Player_ID, Player_Name) VALUES (" + user.getLongID() + ", '" + user.getName() + "')";
+                //System.out.println(statement);
+                SQLUpdate(statement1);
+            }
+
+            String statement = "";
+            statement += "UPDATE Guilds SET Guild_ID = " + guild.getLongID() + ", Guild_Name = '" + guild.getName() + "' WHERE Guild_ID = " + guild.getLongID() + ";";
+            //System.out.println(statement);
+            SQLUpdate(statement);
+            statement = "INSERT OR IGNORE INTO Guilds (Guild_ID, Guild_Name) VALUES (" + guild.getLongID() + ", '" + guild.getName() + "')";
+            //System.out.println(statement);
+            SQLUpdate(statement);
+        }
+
+
+
+    }
+
 }
