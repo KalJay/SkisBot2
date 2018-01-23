@@ -41,7 +41,7 @@ public class skisBot2 {
     }
 
     private static void loadModules() {
-        ModuleManager.initialiseModules();
+        ModuleManager.initialiseModules(discordClient, discordToken, riotAPIKey, OAuthToken, OAuthSecret);
     }
 
     public static List<IGuild> getGuilds() {

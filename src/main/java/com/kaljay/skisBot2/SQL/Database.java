@@ -22,6 +22,7 @@ public class Database {
         try {
             conn = DriverManager.getConnection(url);
             System.out.println("SKIS: Successfully Connected to SQLite Database");
+            initialiseTables();
         } catch (SQLException e) {
             System.out.println("SKIS: Error connecting to SQLite Database :" + e.getMessage());
         } finally {
@@ -35,20 +36,22 @@ public class Database {
         }
     }
 
-    public static void addDataTable(DataTable table) {
+    private static void addDataTable(DataTable table) {
         if(!TableList.contains(table)) {
             TableList.add(table);
         }
 
         String statement = "CREATE TABLE IF NOT EXISTS " + table.name + " (";
+        ArrayList<DataColumn> primaryKeys = new ArrayList<>();
+        ArrayList<DataColumn> foreignKeys = new ArrayList<>();
         for(DataColumn column :table.getDictionary().getColumns()) {
             statement += " " + column.getName();
             statement += " " + column.getType();
             if(column.isPrimaryKey()) {
-                statement += " PRIMARY KEY";
+                primaryKeys.add(column);
             }
             if(column.isForeignKey()) {
-                statement += " FOREIGN KEY";
+                foreignKeys.add(column);
             }
             if(column.isUnique()) {
                 statement += " UNIQUE";
@@ -62,8 +65,24 @@ public class Database {
             if(column.isCollate()) {
                 statement += " COLLATE";
             }
-            statement += ",";
+            statement += ", ";
         }
+
+
+        if(!primaryKeys.isEmpty()) {
+            statement += "PRIMARY KEY (";
+            for(DataColumn column : primaryKeys) {
+                statement += column.getName() + ", ";
+            }
+            statement = statement.substring(0, statement.length()-2);
+            statement += ")";
+        }
+        if(!foreignKeys.isEmpty()) {
+            //Do nothing cause foreign key syntax is not used in this program, and is complicated (THIS KEY REFERENCES THIS KEY etc even if the key may not exist yet in the foreign table >_>)
+        }
+        statement += ")";
+
+        System.out.println(statement);
         SQLUpdate(statement);
 
 
@@ -92,6 +111,42 @@ public class Database {
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
+        }
+    }
+
+    public static void initialiseTables() {
+        ArrayList<DataTable> tables = new ArrayList<>();
+
+        DataDictionary guildsDict = new DataDictionary();
+        guildsDict.addColumn("Guild_ID", SQL.VARCHAR, true, false, true, false, true, false);
+        guildsDict.addColumn("Guild_Name", SQL.VARCHAR, false, false, false, false, false, false);
+        guildsDict.addColumn("Bot_Channel", SQL.VARCHAR, false, false, false, false, false, false);
+        tables.add(new DataTable("Guilds", guildsDict));
+
+        DataDictionary playersDict = new DataDictionary();
+        playersDict.addColumn("Player_ID", SQL.VARCHAR, true, false, true, false, true, false);
+        playersDict.addColumn("Player_Name", SQL.VARCHAR, false, false, false, false, false, false);
+        playersDict.addColumn("Summoner_ID", SQL.VARCHAR, false, false, false, false, false, false);
+        tables.add(new DataTable("Players", playersDict));
+
+        DataDictionary guildPlayersDict = new DataDictionary();
+        guildPlayersDict.addColumn("Guild_ID", SQL.VARCHAR, true, false, false, false, true, false);
+        guildPlayersDict.addColumn("Player_ID", SQL.VARCHAR, true, true, false, false, true, false);
+        guildPlayersDict.addColumn("Player_Nickname", SQL.VARCHAR, false, false, false, false, false, false);
+        tables.add(new DataTable("GuildPlayers", guildPlayersDict));
+
+        for(DataTable table : tables) {
+            addDataTable(table);
+        }
+    }
+
+    public static void addInitialiseTable(DataTable table) {
+        TableList.add(table);
+    }
+
+    public static void initialiseModuleTables() {
+        for(DataTable table : TableList) {
+            addDataTable(table);
         }
     }
 }

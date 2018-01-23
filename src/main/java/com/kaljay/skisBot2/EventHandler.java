@@ -16,19 +16,10 @@ import sx.blah.discord.util.audio.events.TrackFinishEvent;
 public class  EventHandler {
 
     @EventSubscriber
-    public static void onReadyEvent(ReadyEvent event) {
+    public void onReadyEvent(ReadyEvent event) {
         System.out.println("SkisBot2 Online and Ready!");
-        createGuildTable();
     }
 
-    private static void createGuildTable() {
-         DataDictionary guildDictionary = new DataDictionary();
-        guildDictionary.addColumn("GuildID", SQL.BIGINT, true, false, true, false, true, false);
-        guildDictionary.addColumn("GuildName", SQL.VARCHAR, false, false, false, false, true, false);
-        guildDictionary.addColumn("botChannelID", SQL.BIGINT, false, false, false, false, false, false);
-
-        Database.addDataTable(new DataTable("Guilds", guildDictionary));
-    }
 
 
     @EventSubscriber
