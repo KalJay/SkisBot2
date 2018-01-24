@@ -1,5 +1,6 @@
 package com.kaljay.skisBot2.modules;
 
+import com.kaljay.skisBot2.EventHandler;
 import net.rithms.riot.api.ApiConfig;
 import net.rithms.riot.api.RiotApi;
 import net.rithms.riot.api.RiotApiException;
@@ -34,4 +35,5 @@ public class LeagueModule {
             return false;
         }
     }
+
 }

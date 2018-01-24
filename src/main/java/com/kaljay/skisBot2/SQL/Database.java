@@ -4,12 +4,8 @@ import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Project: SkisBot2
@@ -17,7 +13,7 @@ import java.util.List;
  */
 public class Database {
 
-    final static String url = "jdbc:sqlite:skisbot2";
+    private final static String url = "jdbc:sqlite:skisbot2";
 
     private static ArrayList<DataTable> TableList =  new ArrayList<>();
 
@@ -117,6 +113,57 @@ public class Database {
                 System.out.println(ex.getMessage());
             }
         }
+    }
+
+    public static ArrayList<ArrayList> SQLQuery(String sql) {
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            c = DriverManager.getConnection(url);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            int columnCount = rs.getMetaData().getColumnCount();
+            ArrayList<ArrayList> results = new ArrayList<>();
+            for(int i =0; i < columnCount; i++) {
+                results.add(new ArrayList());
+            }
+
+
+            while(rs.next()) {
+                for(int i =0; i < columnCount; i++) {
+                    results.get(i).add(rs.getString(i+1));
+                }
+            }
+            //for(int y = 0; y < results.get(0).size(); y++) {  //how to get the data
+            //    for (int i = 0; i < columnCount; i++) {
+            //        System.out.println(results.get(i).get(y));
+            //    }
+            //}
+
+            rs.close();
+            stmt.close();
+            c.close();
+            return results;
+
+        } catch (SQLException e) {
+            e.getMessage();
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+        return null;
     }
 
     public static void initialiseTables() {
