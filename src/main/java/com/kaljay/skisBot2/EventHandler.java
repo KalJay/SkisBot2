@@ -5,6 +5,7 @@ import com.kaljay.skisBot2.SQL.DataTable;
 import com.kaljay.skisBot2.SQL.Database;
 import com.kaljay.skisBot2.comms.Voice;
 import com.kaljay.skisBot2.SQL.SQL;
+import com.kaljay.skisBot2.modules.Module;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
@@ -12,6 +13,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,11 +22,11 @@ import java.util.Map;
  */
 public class  EventHandler {
 
-    private Map<String, Object> moduleList;
+    private static Map<String, Module> moduleList = new HashMap<>();
 
     @EventSubscriber
     public void onReadyEvent(ReadyEvent event) {
-        System.out.println("SkisBot2 Online and Ready!");
+        skisBot2.logInfo("SKIS Bot 2 Online and Ready!");
         Database.UpdateOrInsertDefaultTables();
     }
 
@@ -37,7 +39,11 @@ public class  EventHandler {
 
     @EventSubscriber
     public void onMessageEvent(MessageReceivedEvent event) {
-
+        for(Map.Entry<String, Module> entry : moduleList.entrySet()) {
+            if(event.getMessage().getContent().startsWith(entry.getKey())) {
+                entry.getValue().command(event.getMessage().getContent().substring(entry.getKey().length()).split(" "), event);
+            }
+        }
     }
 
     @EventSubscriber
@@ -50,4 +56,7 @@ public class  EventHandler {
         Database.UpdateOrInsertDefaultTables();
     }
 
+    public static void addCommandPrefix(String prefix, Module module) {
+        moduleList.put(prefix, module);
+    }
 }

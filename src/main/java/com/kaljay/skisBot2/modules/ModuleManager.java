@@ -10,21 +10,20 @@ import sx.blah.discord.api.IDiscordClient;
 public class ModuleManager {
 
     private static IDiscordClient discordClient;
-    static String discordToken = "";
-    static String riotAPIKey = "";
-    static String OAuthToken = "";
-    static String OAuthSecret = "";
+    private static String riotAPIKey;
+    private static String OAuthToken;
+    private static String OAuthSecret;
 
-    public static void initialiseModules(IDiscordClient discordClient, String discordToken, String riotAPIKey, String OAuthToken, String OAuthSecret) {
-        discordClient = ModuleManager.discordClient;
-        riotAPIKey = ModuleManager.riotAPIKey;
-        OAuthToken = ModuleManager.OAuthToken;
-        OAuthSecret = ModuleManager.OAuthSecret;
+    public static void initialiseModules(IDiscordClient discordClient, String riotAPIKey, String OAuthToken, String OAuthSecret) {
+        ModuleManager.discordClient = discordClient;
+        ModuleManager.riotAPIKey = riotAPIKey;
+        ModuleManager.OAuthToken = OAuthToken;
+        ModuleManager.OAuthSecret = OAuthSecret;
 
         Database.connect();
         //CalendarEvents.setTimers(); //to be fixed at a later date
 
-        LeagueModule.run(riotAPIKey);
+        LeagueModule leagueModule = new LeagueModule(riotAPIKey);
 
         Database.initialiseModuleTables(); //stays last, unless a module wants access to its new table upon initialisation immediately
 

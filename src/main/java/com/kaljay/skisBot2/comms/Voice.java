@@ -34,11 +34,11 @@ public class Voice {
                     return false;
                 }
             } else {
-                System.out.println("SKIS: WARNING: Tried to play audio in a PM");
+                skisBot2.logWarn("Tried to play audio in a PM");
                 return false;
             }
         } else {
-            System.out.println("SKIS: WARNING: Tried to join a voice channel while engaged");
+            skisBot2.logWarn("Tried to join a voice channel while engaged");
             return false;
         }
     }
@@ -49,7 +49,7 @@ public class Voice {
             engaged = false;
             return true;
         } else {
-            System.out.println("SKIS: WARNING: Tried to leave a voice channel while not engaged");
+            skisBot2.logWarn("Tried to leave a voice channel while not engaged");
             return false;
         }
     }

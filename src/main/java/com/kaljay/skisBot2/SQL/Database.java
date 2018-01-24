@@ -18,16 +18,16 @@ public class Database {
     private static ArrayList<DataTable> TableList =  new ArrayList<>();
 
     public static void connect() {
-        System.out.println("SKIS: Connecting to SQLite Database...");
+        skisBot2.logInfo("Connecting to SQLite Database...");
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
-            System.out.println("SKIS: Successfully Connected to SQLite Database");
+            skisBot2.logInfo("Successfully Connected to SQLite Database");
             initialiseTables();
         } catch (SQLException e) {
-            System.out.println("SKIS: Error connecting to SQLite Database :" + e.getMessage());
+            skisBot2.logError("Error connecting to SQLite Database :" + e.getMessage());
         } finally {
-            try {
+        try {
                 if (conn != null) {
                     conn.close();
                 }
@@ -89,9 +89,9 @@ public class Database {
 
     }
 
-    private static void SQLUpdate(String sql) {
+    public static void SQLUpdate(String sql) {
         Connection c = null;
-        Statement stmt = null;
+        Statement stmt;
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -117,7 +117,7 @@ public class Database {
 
     public static ArrayList<ArrayList> SQLQuery(String sql) {
         Connection c = null;
-        Statement stmt = null;
+        Statement stmt;
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -138,9 +138,9 @@ public class Database {
                     results.get(i).add(rs.getString(i+1));
                 }
             }
-            //for(int y = 0; y < results.get(0).size(); y++) {  //how to get the data
-            //    for (int i = 0; i < columnCount; i++) {
-            //        System.out.println(results.get(i).get(y));
+            //for(int y = 0; y < results.get(0).size(); y++) {  //how to get the data, columnCount = results.size() (i think, off by one error may exist idk)
+            //    for (int x = 0; x < columnCount; x++) {
+            //        System.out.println(results.get(x).get(y));
             //    }
             //}
 
@@ -166,7 +166,7 @@ public class Database {
         return null;
     }
 
-    public static void initialiseTables() {
+    private static void initialiseTables() {
         ArrayList<DataTable> tables = new ArrayList<>();
 
         DataDictionary guildsDict = new DataDictionary();

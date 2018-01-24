@@ -41,7 +41,7 @@ public class Config {
                 configLines.addAll(Arrays.asList(template));
                 
                 Files.write(configPath, configLines, utf8);
-                System.out.println("SKIS: Created Config File: token required for further operation");
+                skisBot2.logWarn("Created Config File: token required for further operation");
                 return false;
             } else {
                 return readConfig();
@@ -60,9 +60,9 @@ public class Config {
                 importLine(line);
             }
             if (!discordToken.equals("")) {
-                System.out.println("SKIS: Discord Token Found");
+                skisBot2.logInfo("Discord Token Found");
             } else {
-                System.out.println("SKIS: ERROR: Discord Token Not Found");
+                skisBot2.logError("Discord Token Not Found");
             }
             return !discordToken.equals("");
         } catch (IOException e) {

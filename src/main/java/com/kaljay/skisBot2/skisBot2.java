@@ -2,16 +2,13 @@ package com.kaljay.skisBot2;
 
 import com.kaljay.skisBot2.modules.CalendarEvents;
 import com.kaljay.skisBot2.modules.ModuleManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.audio.AudioPlayer;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -25,14 +22,16 @@ public class skisBot2 {
     static String riotAPIKey = "";
     static String OAuthToken = "";
     static String OAuthSecret = "";
+    static Logger logger;
 
     public static void main(String[] args) throws Exception {
+        logger = LoggerFactory.getLogger("SKIS Bot 2");
         if(Config.loadConfig()) {
             discordClient = getClient();
             discordClient.getDispatcher().registerListener(new EventHandler());
             loadModules();
         } else {
-            System.out.println("SKIS: Shutting Down...");
+            logError("Shutting Down...");
         }
     }
 
@@ -41,11 +40,27 @@ public class skisBot2 {
     }
 
     private static void loadModules() {
-        ModuleManager.initialiseModules(discordClient, discordToken, riotAPIKey, OAuthToken, OAuthSecret);
+        ModuleManager.initialiseModules(discordClient, riotAPIKey, OAuthToken, OAuthSecret);
     }
 
     public static List<IGuild> getGuilds() {
         return discordClient.getGuilds();
+    }
+
+    public static void logError(String string) {
+        logger.error(string);
+    }
+
+    public static void logInfo(String string) {
+        logger.info(string);
+    }
+
+    public static void logDebug(String string) {
+        logger.debug(string);
+    }
+
+    public static void logWarn(String string) {
+        logger.warn(string);
     }
 
 }
