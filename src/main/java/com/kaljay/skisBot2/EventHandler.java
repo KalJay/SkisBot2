@@ -30,6 +30,7 @@ public class  EventHandler {
     public void onReadyEvent(ReadyEvent event) {
         skisBot2.logInfo("SKIS Bot 2 Online and Ready!");
         Database.UpdateOrInsertDefaultTables();
+        ModuleManager.onReadyEvent(event);
     }
 
 

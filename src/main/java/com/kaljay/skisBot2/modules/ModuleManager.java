@@ -2,6 +2,7 @@ package com.kaljay.skisBot2.modules;
 
 import com.kaljay.skisBot2.SQL.Database;
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
@@ -29,6 +30,7 @@ public class ModuleManager {
         LeagueModule leagueModule = new LeagueModule(riotAPIKey);
         MemesModule memesModule = new MemesModule();
 
+
         Database.initialiseModuleTables(); //stays last, unless a module wants access to its new table upon initialisation immediately
 
     }
@@ -42,6 +44,10 @@ public class ModuleManager {
     }
 
     public static void onPresenceUpdateEvent(PresenceUpdateEvent event) {
+        StatusModule.setStatus(discordClient);
+    }
 
+    public static void onReadyEvent(ReadyEvent event) {
+        StatusModule statusModule = new StatusModule(discordClient);
     }
 }
