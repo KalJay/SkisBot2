@@ -18,27 +18,34 @@ public class Voice {
 
     private static boolean engaged = false;
     private static IVoiceChannel engagedChannel = null;
+    private static final float volumeValue = Float.parseFloat("0.1");
 
     public static boolean sendToVoiceChannel(IVoiceChannel channel, String file) {
-        if(!engaged) {
-            engaged = true;
-            if(!channel.isPrivate()) {
-                engagedChannel = channel;
-                channel.join();
-                try {
-                    playAudioFromFile(file, channel);
-                    return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    channel.leave();
+        try {
+            if (!engaged) {
+                engaged = true;
+                if (!channel.isPrivate()) {
+                    engagedChannel = channel;
+                    channel.join();
+                    try {
+                        playAudioFromFile(file, channel);
+                        return true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        channel.leave();
+                        return false;
+                    }
+                } else {
+                    skisBot2.logWarn("Tried to play audio in a PM");
                     return false;
                 }
             } else {
-                skisBot2.logWarn("Tried to play audio in a PM");
+                skisBot2.logWarn("Tried to join a voice channel while engaged");
                 return false;
             }
-        } else {
-            skisBot2.logWarn("Tried to join a voice channel while engaged");
+        } catch (Exception e) {
+            leaveVoiceChannel();
+            skisBot2.logError("Catch an exception while sending voice to channel");
             return false;
         }
     }
@@ -64,6 +71,7 @@ public class Voice {
             url = skisBot2.class.getResource("/resources/" + s_file);
         }
         AudioPlayer player = AudioPlayer.getAudioPlayerForGuild(channel.getGuild());
+        player.setVolume(volumeValue);
         player.queue(url);
     }
 }

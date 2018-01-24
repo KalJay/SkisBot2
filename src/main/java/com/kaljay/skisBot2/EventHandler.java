@@ -6,11 +6,13 @@ import com.kaljay.skisBot2.SQL.Database;
 import com.kaljay.skisBot2.comms.Voice;
 import com.kaljay.skisBot2.SQL.SQL;
 import com.kaljay.skisBot2.modules.Module;
+import com.kaljay.skisBot2.modules.ModuleManager;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 import sx.blah.discord.util.audio.events.TrackFinishEvent;
 
 import java.util.HashMap;
@@ -39,21 +41,30 @@ public class  EventHandler {
 
     @EventSubscriber
     public void onMessageEvent(MessageReceivedEvent event) {
+
         for(Map.Entry<String, Module> entry : moduleList.entrySet()) {
             if(event.getMessage().getContent().startsWith(entry.getKey())) {
                 entry.getValue().command(event.getMessage().getContent().substring(entry.getKey().length()).split(" "), event);
+                if(!event.getChannel().isPrivate()) {
+                    event.getMessage().delete();
+                }
             }
         }
     }
 
     @EventSubscriber
     public void onUserJoinEvent(UserJoinEvent event) {
-        Database.UpdateOrInsertDefaultTables();
+        ModuleManager.onUserJoin(event);
     }
 
     @EventSubscriber
     public void onGuildCreateEvent(GuildCreateEvent event) {
-        Database.UpdateOrInsertDefaultTables();
+        ModuleManager.onGuildJoin(event);
+    }
+
+    @EventSubscriber
+    public void onPresenceUpdateEvent(PresenceUpdateEvent event) {
+        ModuleManager.onPresenceUpdateEvent(event);
     }
 
     public static void addCommandPrefix(String prefix, Module module) {

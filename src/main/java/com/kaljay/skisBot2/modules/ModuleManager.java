@@ -2,6 +2,9 @@ package com.kaljay.skisBot2.modules;
 
 import com.kaljay.skisBot2.SQL.Database;
 import sx.blah.discord.api.IDiscordClient;
+import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
+import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
+import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 
 /**
  * Project: SkisBot2
@@ -24,8 +27,21 @@ public class ModuleManager {
         //CalendarEvents.setTimers(); //to be fixed at a later date
 
         LeagueModule leagueModule = new LeagueModule(riotAPIKey);
+        MemesModule memesModule = new MemesModule();
 
         Database.initialiseModuleTables(); //stays last, unless a module wants access to its new table upon initialisation immediately
+
+    }
+
+    public static void onUserJoin(UserJoinEvent event) {
+        Database.UpdateOrInsertDefaultTables();
+    }
+
+    public static void onGuildJoin(GuildCreateEvent event) {
+        Database.UpdateOrInsertDefaultTables();
+    }
+
+    public static void onPresenceUpdateEvent(PresenceUpdateEvent event) {
 
     }
 }

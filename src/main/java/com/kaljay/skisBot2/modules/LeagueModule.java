@@ -79,6 +79,7 @@ public class LeagueModule implements Module{
     private void generateCode(MessageReceivedEvent event) {
         String code = createVerificationCode(event.getAuthor());
         Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Here's your new verification code: " + code);
+        skisBot2.logInfo("Served a new verification code to Discord user " + event.getAuthor().getName());
     }
 
     private void register(MessageReceivedEvent event, String summonerName) {
