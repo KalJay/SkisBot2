@@ -1,6 +1,5 @@
 package com.kaljay.skisBot2;
 
-import com.kaljay.skisBot2.modules.CalendarEvents;
 import com.kaljay.skisBot2.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

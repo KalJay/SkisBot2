@@ -6,6 +6,9 @@ import com.kaljay.skisBot2.comms.Voice;
 import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
+import java.io.*;
+import java.net.URL;
+
 /**
  * Project: SkisBot2
  * Created by KalJay on 24/01/2018 at 11:31 PM.
@@ -37,6 +40,28 @@ public class MemesModule implements Module {
                 break;
             case "god":
                 playVoiceMeme("god", event);
+                break;
+            case "timeforleague":
+                postMeme("timeforleague", event);
+        }
+    }
+
+    private void postMeme(String meme, MessageReceivedEvent event) {
+        switch(meme) {
+            case "timeforleague":
+                Text.sendToTextChannel(event.getChannel(), getFileFromName("timeforskis.jpg"));
+                break;
+            case "timeforskis":
+                Text.sendToTextChannel(event.getChannel(), "timeforskis.jpg");
+                break;
+            case "slashingprices":
+                Text.sendToTextChannel(event.getChannel(), "slashingprices.png");
+                break;
+            case "backfromthedead":
+                Text.sendToTextChannel(event.getChannel(), "skisisback.jpg");
+                break;
+            case "truck":
+                Text.sendToTextChannel(event.getChannel(), "truck.jpg");
                 break;
         }
     }
@@ -78,6 +103,29 @@ public class MemesModule implements Module {
             return "god3.wav";
         } else {
             return "god4.wav";
+        }
+    }
+
+    private File getFileFromName(String name) {
+        //try {
+            URL url;
+            if (MemesModule.class.getResource("MemesModule.class").toString().startsWith("file:")) {
+                return new File("src/main/resources/resources/" + name);//.toURI().toURL();
+            } else {
+                //url = MemesModule.class.getResource("/resources/" + name);
+                new File(getClass().getResource(name).toString());
+            }
+        //} //catch (IOException e) {
+           // e.printStackTrace();
+        //}
+        return null;
+    }
+
+    private String decideFormat(String name) {
+        if (name.contains(".")) {
+            return name.substring(name.indexOf(".") + 1);
+        } else {
+            return "jpg";
         }
     }
 }

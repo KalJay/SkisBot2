@@ -1,19 +1,9 @@
 package com.kaljay.skisBot2;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import static com.kaljay.skisBot2.skisBot2.discordToken;
-import static com.kaljay.skisBot2.skisBot2.riotAPIKey;
-import static com.kaljay.skisBot2.skisBot2.OAuthToken;
-import static com.kaljay.skisBot2.skisBot2.OAuthSecret;
+import java.io.*;
+import java.util.Properties;
+
 
 /**
  * Project: SkisBot2
@@ -21,70 +11,55 @@ import static com.kaljay.skisBot2.skisBot2.OAuthSecret;
  */
 public class Config {
 
-    final static String[] template = {
-            "DISCORD_TOKEN: " ,
-            "RIOT_API_KEY: " ,
-            "OAUTH_TOKEN: " ,
-            "OAUTH_SECRET: "
-    };
 
-    private static String token = "config.txt";
-    private static Path configPath = Paths.get(token);
-    private static Charset utf8 = StandardCharsets.UTF_8;
+        private static String path = "./config.properties";
 
     public static boolean loadConfig() {
-        try {
-            if (!Files.exists(configPath)) {
-                Files.createFile(configPath);
-                
-                List<String> configLines = new ArrayList<>();
-                configLines.addAll(Arrays.asList(template));
-                
-                Files.write(configPath, configLines, utf8);
-                skisBot2.logWarn("Created Config File: token required for further operation");
-                return false;
-            } else {
-                return readConfig();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
 
-    private static boolean readConfig() {
-        List<String> configLines;
+        Properties mainProperties = new Properties();
+        FileInputStream file;
         try {
-            configLines = Files.readAllLines(configPath, utf8);
-            for(String line: configLines) {
-                importLine(line);
-            }
-            if (!discordToken.equals("")) {
-                skisBot2.logInfo("Discord Token Found");
+            file = new FileInputStream(path);
+            mainProperties.load(file);
+            file.close();
+
+            skisBot2.discordToken = (String) mainProperties.get("discord.token");
+            skisBot2.riotAPIKey = (String) mainProperties.get("riot.api.key");
+            skisBot2.OAuthToken = (String) mainProperties.get("oauth.token");
+            skisBot2.OAuthSecret = (String) mainProperties.get("oauth.secret");
+            if(skisBot2.discordToken != "") {
+                skisBot2.logInfo("Discord token found");
+                return true;
             } else {
-                skisBot2.logError("Discord Token Not Found");
+                skisBot2.logError("Discord token not found. Check config.properties and ensure correct syntax");
+                return false;
             }
-            return !discordToken.equals("");
+        } catch (FileNotFoundException e) {
+            createProperties();
+            skisBot2.logInfo("Properties file created, discord Token required for further operation");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    private static void importLine(String line) {
-        if(!line.startsWith("//")) {
-            if (line.contains(template[0])) {
-                discordToken = line.substring(template[0].length());
-            }
-            if (line.contains(template[1])) {
-                riotAPIKey = line.substring(template[1].length());
-            }
-            if (line.contains(template[2])) {
-                OAuthToken = line.substring(template[2].length());
-            }
-            if (line.contains(template[3])) {
-                OAuthSecret = line.substring(template[3].length());
-            }
+    private static void createProperties() {
+
+        try {
+            Properties properties = new Properties();
+            properties.setProperty("discord.token", "");
+            properties.setProperty("riot.api.key", "");
+            properties.setProperty("oauth.token", "");
+            properties.setProperty("oauth.secret", "");
+
+            File file = new File(path);
+            FileOutputStream fileOut = new FileOutputStream(file);
+            properties.store(fileOut, "SKIS Bot 2 Properties File");
+            fileOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
