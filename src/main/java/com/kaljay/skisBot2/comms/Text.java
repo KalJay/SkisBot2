@@ -2,12 +2,14 @@ package com.kaljay.skisBot2.comms;
 
 
 import com.kaljay.skisBot2.skisBot2;
+import jdk.internal.util.xml.impl.Input;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IPrivateChannel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * Project: SkisBot2
@@ -31,6 +33,11 @@ public class Text {
         return false;
     }
 
+    public static boolean sendToTextChannel(IChannel channel, String text, InputStream file, String fileName) {
+        channel.sendFile(text, file, fileName);
+        return true;
+    }
+
     public static boolean sendToTextChannel(IChannel channel, File file) {
         try {
             channel.sendFile(file);
@@ -39,6 +46,12 @@ public class Text {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean sendToTextChannel(IChannel channel, InputStream file, String fileName) {
+        String text = "";
+        channel.sendFile(text, file, fileName);
+        return true;
     }
 
     public static boolean sendToPM(IPrivateChannel channel, String text) {
@@ -56,6 +69,11 @@ public class Text {
         return false;
     }
 
+    public static boolean sendToPM(IPrivateChannel channel, String text, InputStream file, String fileName) {
+        channel.sendFile(text, file, fileName);
+        return true;
+    }
+
     public static boolean sendToPM(IPrivateChannel channel, File file) {
         try {
             channel.sendFile( file);
@@ -64,6 +82,12 @@ public class Text {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean sendToPM(IPrivateChannel channel, InputStream file, String fileName) {
+        String text = ";";
+        channel.sendFile(text, file, fileName);
+        return true;
     }
 
     public static boolean sendToAllGuilds(String text) {

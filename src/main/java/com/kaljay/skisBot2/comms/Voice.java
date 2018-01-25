@@ -64,11 +64,11 @@ public class Voice {
     public static void playAudioFromFile(String s_file, IChannel channel) throws IOException, UnsupportedAudioFileException {
         URL url;
         if (skisBot2.class.getResource("skisBot2.class").toString().startsWith("file:")) {
-            url = new File("src/main/resources/resources/" + s_file).toURI().toURL();
+            url = new File("src/main/resources/" + s_file).toURI().toURL();
         } else {
             //System.out.println(SkisBot.class.getResource("/resources/" + s_file).toString());
-            System.out.println("/resources/" + s_file);
-            url = skisBot2.class.getResource("/resources/" + s_file);
+            System.out.println("/" + s_file);
+            url = skisBot2.class.getResource("/" + s_file);
         }
         AudioPlayer player = AudioPlayer.getAudioPlayerForGuild(channel.getGuild());
         player.setVolume(volumeValue);

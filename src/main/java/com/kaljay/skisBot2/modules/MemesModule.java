@@ -1,6 +1,7 @@
 package com.kaljay.skisBot2.modules;
 
 import com.kaljay.skisBot2.EventHandler;
+import com.kaljay.skisBot2.ResourceHandler;
 import com.kaljay.skisBot2.comms.Text;
 import com.kaljay.skisBot2.comms.Voice;
 import com.kaljay.skisBot2.skisBot2;
@@ -43,25 +44,32 @@ public class MemesModule implements Module {
                 break;
             case "timeforleague":
                 postMeme("timeforleague", event);
+                break;
+            case "slashingprices":
+                postMeme("slashingprices", event);
+                break;
+            case "backfromthedead":
+                postMeme("backfromthedead", event);
+                break;
+            case "truck":
+                postMeme("truck", event);
+                break;
         }
     }
 
     private void postMeme(String meme, MessageReceivedEvent event) {
         switch(meme) {
             case "timeforleague":
-                Text.sendToTextChannel(event.getChannel(), getFileFromName("timeforskis.jpg"));
-                break;
-            case "timeforskis":
-                Text.sendToTextChannel(event.getChannel(), "timeforskis.jpg");
+                Text.sendToTextChannel(event.getChannel(), getFileFromName("timeforleague.jpg"), "timeforleague.jpg");
                 break;
             case "slashingprices":
-                Text.sendToTextChannel(event.getChannel(), "slashingprices.png");
+                Text.sendToTextChannel(event.getChannel(), getFileFromName("slashingprices.png"), "slashingprices.png");
                 break;
             case "backfromthedead":
-                Text.sendToTextChannel(event.getChannel(), "skisisback.jpg");
+                Text.sendToTextChannel(event.getChannel(), getFileFromName("skisisback.jpg"), "skisisback.jpg");
                 break;
             case "truck":
-                Text.sendToTextChannel(event.getChannel(), "truck.jpg");
+                Text.sendToTextChannel(event.getChannel(), getFileFromName("truck.jpg"), "truck.jpg");
                 break;
         }
     }
@@ -106,26 +114,7 @@ public class MemesModule implements Module {
         }
     }
 
-    private File getFileFromName(String name) {
-        //try {
-            URL url;
-            if (MemesModule.class.getResource("MemesModule.class").toString().startsWith("file:")) {
-                return new File("src/main/resources/resources/" + name);//.toURI().toURL();
-            } else {
-                //url = MemesModule.class.getResource("/resources/" + name);
-                new File(getClass().getResource(name).toString());
-            }
-        //} //catch (IOException e) {
-           // e.printStackTrace();
-        //}
-        return null;
-    }
-
-    private String decideFormat(String name) {
-        if (name.contains(".")) {
-            return name.substring(name.indexOf(".") + 1);
-        } else {
-            return "jpg";
-        }
+    private InputStream getFileFromName(String name) {
+        return skisBot2.getResourceHandler().getFile(name);
     }
 }

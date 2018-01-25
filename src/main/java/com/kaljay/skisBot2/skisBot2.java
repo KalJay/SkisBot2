@@ -22,9 +22,11 @@ public class skisBot2 {
     static String OAuthToken = "";
     static String OAuthSecret = "";
     static Logger logger;
+    static ResourceHandler resourceHandler;
 
     public static void main(String[] args) throws Exception {
         logger = LoggerFactory.getLogger("SKIS Bot 2");
+        resourceHandler = new ResourceHandler();
         if(Config.loadConfig()) {
             discordClient = getClient();
             discordClient.getDispatcher().registerListener(new EventHandler());
@@ -60,6 +62,10 @@ public class skisBot2 {
 
     public static void logWarn(String string) {
         logger.warn(string);
+    }
+
+    public static ResourceHandler getResourceHandler() {
+        return resourceHandler;
     }
 
 }
