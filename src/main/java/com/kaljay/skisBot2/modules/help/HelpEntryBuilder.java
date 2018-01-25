@@ -31,10 +31,10 @@ public class HelpEntryBuilder {
     }
 
     public void addHelpEntry(String command, String extraSyntax, String helpEntry) {
-        if(extraSyntax.isEmpty()) {
-            helpEntries.add(prefix + " " + command + " - " + helpEntry);
+        if(extraSyntax.equals("")) {
+            helpEntries.add(prefix + command + " - " + helpEntry);
         } else {
-            helpEntries.add(prefix + " " + command + " " + extraSyntax + " - " + helpEntry);
+            helpEntries.add(prefix + command + " " + extraSyntax + " - " + helpEntry);
         }
     }
 

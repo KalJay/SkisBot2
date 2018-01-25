@@ -30,13 +30,17 @@ public class HelpModule implements Module {
             Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), createSendableHelp(resultEntry, true));
         } else {
             if (args[0].isEmpty()) {
-                Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), unrecognisedCommand(this.getName()));
+                Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Unrecognised Command");
+                Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), createSendableHelp(getHelpEntryByName("HelpModule"), false));
+                //Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), unrecognisedCommand(this.getName()));
             } else {
                 StringBuilder text = new StringBuilder();
+                text.append("```");
                 text.append("Unknown help entry specified, please use one of the below: \n\n");
                 for (Map.Entry<String, ArrayList<String>> entry : helpSections.entrySet()) {
                     text.append("!help ").append(ModuleManager.getCommandPrefix(ModuleManager.getModuleByName(entry.getKey())).substring(1)).append(" - help for ").append(ModuleManager.getModuleByName(entry.getKey()).getName()).append("\n");
                 }
+                text.append("```");
                 Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), text.toString());
             }
         }
@@ -54,6 +58,7 @@ public class HelpModule implements Module {
 
     public void buildEntry(HelpEntryBuilder builder) {
         helpSections.put(builder.getModule().getName(), builder.getHelpEntries());
+        skisBot2.logInfo(builder.getModule().getName() + " has registered help pages");
     }
 
     private Map.Entry<String, ArrayList<String>> getHelpEntryByName(String name) {
@@ -70,8 +75,8 @@ public class HelpModule implements Module {
 
     private String createSendableHelp(Map.Entry<String, ArrayList<String>> entry, boolean description) {
         StringBuilder text = new StringBuilder();
+        text.append("```");
         if (entry == null) {
-            skisBot2.logDebug("NULL!");
         }
         if(description) {
             text.append(ModuleManager.getModuleByName(entry.getKey()).getDescription()).append("\n\n");
@@ -79,14 +84,8 @@ public class HelpModule implements Module {
         for (String entry1 : entry.getValue()) {
             text.append(entry1).append("\n");
         }
+        text.append("```");
         return text.toString();
-    }
-
-    private String unrecognisedCommand(String moduleName) {
-        String text = "Unrecognised command. \n\n";
-        skisBot2.logDebug(moduleName);
-        text += createSendableHelp(getHelpEntryByName(moduleName), false);
-        return text;
     }
 
     private Map.Entry<String, ArrayList<String>> getHelpEntryByPrefix(String prefix) {

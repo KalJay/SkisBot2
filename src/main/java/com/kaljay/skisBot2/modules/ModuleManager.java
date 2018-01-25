@@ -2,6 +2,7 @@ package com.kaljay.skisBot2.modules;
 
 import com.kaljay.skisBot2.SQL.Database;
 import com.kaljay.skisBot2.modules.help.HelpModule;
+import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.GuildCreateEvent;
@@ -9,6 +10,7 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.impl.events.user.PresenceUpdateEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,11 @@ public class ModuleManager {
     private static String OAuthSecret;
 
     private static Map<String, Module> moduleList = new HashMap<>();
+    private static ArrayList<Module> loadedModules = new ArrayList<>();
+
+    private static boolean ready = false;
+
+    private static StatusModule statusModule;
 
     public static void initialiseModules(IDiscordClient discordClient, String riotAPIKey, String OAuthToken, String OAuthSecret) {
         ModuleManager.discordClient = discordClient;
@@ -32,11 +39,13 @@ public class ModuleManager {
         ModuleManager.OAuthSecret = OAuthSecret;
 
         Database.connect();
-        //CalendarEvents.setTimers(); //to be fixed at a later date
 
-        HelpModule helpModule = new HelpModule();
+        HelpModule helpModule = new HelpModule(); //stays as first module, so that HelpModule is available for modules to register help pages with.
+
+        //CalendarEvents.setTimers(); //to be fixed at a later date
         LeagueModule leagueModule = new LeagueModule(riotAPIKey);
         MemesModule memesModule = new MemesModule();
+        statusModule = new StatusModule(discordClient);
 
 
         Database.initialiseModuleTables(); //stays last, unless a module wants access to its new table upon initialisation immediately
@@ -52,11 +61,14 @@ public class ModuleManager {
     }
 
     public static void onPresenceUpdateEvent(PresenceUpdateEvent event) {
-        StatusModule.setStatus(discordClient);
+        if(isReady()) {
+            statusModule.setStatus();
+        }
     }
 
     public static void onReadyEvent(ReadyEvent event) {
-        StatusModule statusModule = new StatusModule(discordClient);
+        ready = true;
+        statusModule.setStatus();
     }
 
     public static void onMessageReceivedEvent(MessageReceivedEvent event) {
@@ -79,6 +91,15 @@ public class ModuleManager {
 
     public static void addCommandPrefix(String prefix, Module module) {
         moduleList.put(prefix, module);
+        if(!loadedModules.contains(module)) {
+            registerModule(module);
+        }
+        skisBot2.logInfo(module.getName() + " has registered the prefix '" + prefix.trim() + "'");
+    }
+
+    public static void registerModule(Module module) {
+        loadedModules.add(module);
+        skisBot2.logInfo(module.getName() + " has registered with SKIS Module Manager");
     }
 
     public static String getCommandPrefix(Module module) {
@@ -97,5 +118,18 @@ public class ModuleManager {
             }
         }
         return null;
+    }
+
+    public static boolean isModuleLoaded(String name) {
+        for(Module entry : loadedModules) {
+            if(entry.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isReady() {
+        return ready;
     }
 }

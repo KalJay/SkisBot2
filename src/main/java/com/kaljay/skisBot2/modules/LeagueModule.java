@@ -2,6 +2,8 @@ package com.kaljay.skisBot2.modules;
 
 import com.kaljay.skisBot2.SQL.Database;
 import com.kaljay.skisBot2.comms.Text;
+import com.kaljay.skisBot2.modules.help.HelpEntryBuilder;
+import com.kaljay.skisBot2.modules.help.HelpModule;
 import com.kaljay.skisBot2.skisBot2;
 import com.merakianalytics.orianna.Orianna;
 import com.merakianalytics.orianna.types.common.Region;
@@ -21,12 +23,15 @@ import java.util.UUID;
  */
 public class LeagueModule implements Module{
 
-    private static Map<IUser, String> verificationCodes = new HashMap<>();
+    private Map<IUser, String> verificationCodes = new HashMap<>();
 
     public LeagueModule(String riotAPIKey) {
         Orianna.setRiotAPIKey(riotAPIKey);
         Orianna.setDefaultRegion(Region.OCEANIA);
         ModuleManager.addCommandPrefix("!lol ", this);
+        if(ModuleManager.isModuleLoaded("HelpModule")) {
+            createHelpPages();
+        }
     }
 
     private boolean validTPC(String summonerName, String code){
@@ -113,5 +118,14 @@ public class LeagueModule implements Module{
         String code = UUID.randomUUID().toString();
         verificationCodes.put(user, code);
         return code;
+    }
+
+    private void createHelpPages() {
+        HelpEntryBuilder builder = new HelpEntryBuilder(this);
+        builder.addHelpEntry("gencode", "", "Creates a new verification code to use to connect your League of Legends account.");
+        builder.addHelpEntry("register", "<Summoner Name>", "Attempts to verify and link your League of Legends account to your Discord Account");
+        builder.addHelpEntry("forgetme", "", "Removes all links your Discord account has with a League of Legends account");
+        HelpModule helpModule = (HelpModule) ModuleManager.getModuleByName("HelpModule");
+        helpModule.buildEntry(builder);
     }
 }

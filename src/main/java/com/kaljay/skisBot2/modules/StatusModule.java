@@ -10,15 +10,18 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
  */
 public class StatusModule implements Module{
 
+    IDiscordClient client;
+
     public StatusModule(IDiscordClient client) {
-        setStatus(client);
+        this.client = client;
+        ModuleManager.registerModule(this);
     }
 
-    public static void setStatus(IDiscordClient client) {
+    public void setStatus() {
         client.changePlayingText(randomStatus());
     }
 
-    private static String randomStatus() {
+    private String randomStatus() {
         double number = java.lang.Math.random();
         if(number < 0.25) {
             //System.out.print("1, " + number);
