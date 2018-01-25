@@ -1,14 +1,11 @@
 package com.kaljay.skisBot2.modules;
 
-import com.kaljay.skisBot2.EventHandler;
-import com.kaljay.skisBot2.ResourceHandler;
 import com.kaljay.skisBot2.comms.Text;
 import com.kaljay.skisBot2.comms.Voice;
 import com.kaljay.skisBot2.skisBot2;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 
 import java.io.*;
-import java.net.URL;
 
 /**
  * Project: SkisBot2
@@ -18,7 +15,7 @@ public class MemesModule implements Module {
 
 
     public MemesModule() {
-        EventHandler.addCommandPrefix("!m ", this);
+        ModuleManager.addCommandPrefix("!m ", this);
     }
 
     @Override
@@ -55,6 +52,16 @@ public class MemesModule implements Module {
                 postMeme("truck", event);
                 break;
         }
+    }
+
+    @Override
+    public String getName() {
+        return "MemesModule";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Provides a variety of SKIS memes literally on command.";
     }
 
     private void postMeme(String meme, MessageReceivedEvent event) {

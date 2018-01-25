@@ -9,4 +9,8 @@ import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedE
 public interface Module {
 
     public void command(String[] args, MessageReceivedEvent event);
+
+    public String getName();
+
+    public String getDescription();
 }

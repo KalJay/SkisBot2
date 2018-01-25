@@ -1,6 +1,5 @@
 package com.kaljay.skisBot2.modules;
 
-import com.kaljay.skisBot2.EventHandler;
 import com.kaljay.skisBot2.SQL.Database;
 import com.kaljay.skisBot2.comms.Text;
 import com.kaljay.skisBot2.skisBot2;
@@ -27,7 +26,7 @@ public class LeagueModule implements Module{
     public LeagueModule(String riotAPIKey) {
         Orianna.setRiotAPIKey(riotAPIKey);
         Orianna.setDefaultRegion(Region.OCEANIA);
-        EventHandler.addCommandPrefix("!lol ", this);
+        ModuleManager.addCommandPrefix("!lol ", this);
     }
 
     private boolean validTPC(String summonerName, String code){
@@ -69,6 +68,16 @@ public class LeagueModule implements Module{
                 deleteRegistration(event);
         }
 
+    }
+
+    @Override
+    public String getName() {
+        return "LeagueModule";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Provides an assortment of tools to enhance League of Legends experience, use !lol register <Summoner Name> or !lol gencode to begin!";
     }
 
     private void deleteRegistration(MessageReceivedEvent event) {
