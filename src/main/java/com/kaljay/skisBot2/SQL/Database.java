@@ -115,7 +115,7 @@ public class Database {
         }
     }
 
-    public static ArrayList<ArrayList> SQLQuery(String sql) {
+    public static ArrayList<ArrayList<String>> SQLQuery(String sql) {
         Connection c = null;
         Statement stmt;
 
@@ -127,9 +127,9 @@ public class Database {
             ResultSet rs = stmt.executeQuery(sql);
 
             int columnCount = rs.getMetaData().getColumnCount();
-            ArrayList<ArrayList> results = new ArrayList<>();
+            ArrayList<ArrayList<String>> results = new ArrayList<>();
             for(int i =0; i < columnCount; i++) {
-                results.add(new ArrayList());
+                results.add(new ArrayList<>());
             }
 
 

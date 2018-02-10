@@ -23,6 +23,8 @@ import java.util.UUID;
  */
 public class LeagueModule implements Module{
 
+    private boolean autoPost = true;
+
     private Map<IUser, String> verificationCodes = new HashMap<>();
 
     public LeagueModule(String riotAPIKey) {
@@ -32,19 +34,6 @@ public class LeagueModule implements Module{
         if(ModuleManager.isModuleLoaded("HelpModule")) {
             createHelpPages();
         }
-    }
-
-    private boolean validTPC(String summonerName, String code){
-        Summoner summoner = Orianna.summonerNamed(summonerName).get();
-        try {
-            skisBot2.logDebug("Retrieved Verification code: " + Orianna.verificationStringForSummoner(summoner).get());
-
-            return Orianna.verificationStringForSummoner(summoner).get().getString().equals(code);
-        } catch (NullPointerException e) {
-            skisBot2.logWarn("Null pointer Exception avoided");
-            return false;
-        }
-
     }
 
     @Override
@@ -71,8 +60,50 @@ public class LeagueModule implements Module{
                 break;
             case "forgetme":
                 deleteRegistration(event);
+                break;
+            case "vercode":
+                    getVerificationCode(args, event);
         }
 
+    }
+
+    private boolean validTPC(String summonerName, String code){
+        Summoner summoner = Orianna.summonerNamed(summonerName).get();
+        try {
+            String verCode = Orianna.verificationStringForSummoner(summoner).get().getString();
+            skisBot2.logDebug("Retrieved Verification code: " + verCode);
+
+            return Orianna.verificationStringForSummoner(summoner).get().getString().equals(code);
+        } catch (NullPointerException e) {
+            skisBot2.logWarn("Null pointer Exception avoided");
+            return false;
+        }
+
+    }
+
+    private void getVerificationCode(String[] arg, MessageReceivedEvent event) {
+        Summoner summoner;
+        try {
+            summoner = Orianna.summonerNamed(arg[1]).get();
+        } catch (IndexOutOfBoundsException e) {
+            skisBot2.logDebug("isPlayerRegistered = " + isPlayerRegistered(event.getAuthor().getLongID()));
+            if (isPlayerRegistered(event.getAuthor().getLongID())) {
+                skisBot2.logDebug("SummonerID = " + Long.parseLong(getSummonerID(event.getAuthor().getLongID())));
+                summoner = Orianna.summonerWithId(Long.parseLong(getSummonerID(event.getAuthor().getLongID()))).get();
+            } else {
+                summoner = null;
+            }
+        }
+
+        try {
+            String verCode = Orianna.verificationStringForSummoner(summoner).get().getString();
+            skisBot2.logDebug("Retrieved Verification code: " + verCode);
+
+            Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Retrieved the following code: '" + verCode + "'");
+        } catch (NullPointerException e) {
+            skisBot2.logWarn("Null pointer Exception avoided");
+            Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Invalid Summoner Name");
+        }
     }
 
     @Override
@@ -97,15 +128,15 @@ public class LeagueModule implements Module{
     }
 
     private void register(MessageReceivedEvent event, String summonerName) {
-        ArrayList<ArrayList> results = Database.SQLQuery("SELECT Summoner_ID FROM Players WHERE Player_ID = " + event.getAuthor().getLongID());
-        if (results.get(0).get(0) == null) {
+
+        if (!isPlayerRegistered(event.getAuthor().getLongID())) {
             if(validTPC(summonerName, verificationCodes.get(event.getAuthor()))) {
                 Database.SQLUpdate("UPDATE Players SET Summoner_ID = " + Orianna.summonerNamed(summonerName).get().getId() + " WHERE Player_ID = " + event.getAuthor().getLongID());
+                removeVerificationCode(event.getAuthor());
                 Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Successfully registered Summoner " + summonerName + " as Discord user " + event.getAuthor().getName());
                 skisBot2.logInfo("Successfully registered Summoner " + summonerName + " as Discord user " + event.getAuthor().getName());
             } else {
-                String code = createVerificationCode(event.getAuthor());
-                Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Verification failed. Check Summoner name spelling and use the new code '" + code + "' in the verification tab in the League of Legends client options");
+                Text.sendToPM(event.getAuthor().getOrCreatePMChannel(), "Verification failed. Check Summoner name spelling and/or generate a new code with '!lol gencode'. This code goes in the verification tab in the League of Legends client options. It can take a while for this value to update so save and wait 5 minutes before troubleshooting");
                 skisBot2.logInfo("Failed to register Summoner " + summonerName + " as Discord user " + event.getAuthor().getName());
             }
         } else {
@@ -114,18 +145,35 @@ public class LeagueModule implements Module{
         }
     }
 
+    private boolean isPlayerRegistered(Long longID) {
+        ArrayList<ArrayList<String>> results = Database.SQLQuery("SELECT Summoner_ID FROM Players WHERE Player_ID = " + longID);
+        return !(results.get(0).get(0) == null);
+    }
+
+    private String getSummonerID(Long longID) {
+        ArrayList<ArrayList<String>> results = Database.SQLQuery("SELECT Summoner_ID FROM Players WHERE Player_ID = " + longID);
+        return (results.get(0).get(0));
+    }
+
     private String createVerificationCode(IUser user) {
         String code = UUID.randomUUID().toString();
         verificationCodes.put(user, code);
         return code;
     }
 
+    private void removeVerificationCode(IUser user) {
+        verificationCodes.remove(user);
+    }
+
     private void createHelpPages() {
         HelpEntryBuilder builder = new HelpEntryBuilder(this);
         builder.addHelpEntry("gencode", "", "Creates a new verification code to use to connect your League of Legends account.");
+        builder.addHelpEntry("vercode", "", "Check the code currently saved on your League account's verification tab without generating a new one.");
         builder.addHelpEntry("register", "<Summoner Name>", "Attempts to verify and link your League of Legends account to your Discord Account");
         builder.addHelpEntry("forgetme", "", "Removes all links your Discord account has with a League of Legends account");
         HelpModule helpModule = (HelpModule) ModuleManager.getModuleByName("HelpModule");
         helpModule.buildEntry(builder);
     }
+
+
 }
